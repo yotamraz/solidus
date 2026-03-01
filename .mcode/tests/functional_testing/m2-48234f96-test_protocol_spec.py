@@ -9,7 +9,7 @@ This script supports two modes:
 1. SRC Validation: Tests endpoints and captures responses (no expected_response)
 2. DST Contract Validation: Tests endpoints and validates responses match expected (has expected_response)
 
-Generated at: 2026-03-01T20:52:49.552722+00:00
+Generated at: 2026-03-01T21:06:23.114481+00:00
 Project: solidus
 Milestone: 2
 """
@@ -144,10 +144,6 @@ TEST_CASES: list[dict[str, Any]] = resolve_env_placeholders(
         "setup": {
             "endpoint": "/api/products",
             "method": "POST",
-            "headers": {
-                "Authorization": "Bearer testadminapikey01234567890abcdef1234567890abcdef",
-                "Content-Type": "application/json"
-            },
             "body": {
                 "product": {
                     "name": "Product To Delete",
@@ -231,10 +227,6 @@ TEST_CASES: list[dict[str, Any]] = resolve_env_placeholders(
         "setup": {
             "endpoint": "/api/taxonomies",
             "method": "POST",
-            "headers": {
-                "Authorization": "Bearer testadminapikey01234567890abcdef1234567890abcdef",
-                "Content-Type": "application/json"
-            },
             "body": {
                 "taxonomy": {
                     "name": "Taxonomy To Delete"
@@ -294,7 +286,11 @@ TEST_CASES: list[dict[str, Any]] = resolve_env_placeholders(
                 "Authorization": "Bearer testadminapikey01234567890abcdef1234567890abcdef",
                 "Content-Type": "application/json"
             },
-            "body": {}
+            "body": {
+                "order": {
+                    "channel": "api"
+                }
+            }
         },
         "expected_status": 201
     },
@@ -362,10 +358,6 @@ TEST_CASES: list[dict[str, Any]] = resolve_env_placeholders(
         "setup": {
             "endpoint": "/api/zones",
             "method": "POST",
-            "headers": {
-                "Authorization": "Bearer testadminapikey01234567890abcdef1234567890abcdef",
-                "Content-Type": "application/json"
-            },
             "body": {
                 "zone": {
                     "name": "Zone To Delete"
