@@ -9,7 +9,7 @@ This script supports two modes:
 1. SRC Validation: Tests endpoints and captures responses (no expected_response)
 2. DST Contract Validation: Tests endpoints and validates responses match expected (has expected_response)
 
-Generated at: 2026-03-01T21:06:23.114481+00:00
+Generated at: 2026-03-01T21:17:46.543078+00:00
 Project: solidus
 Milestone: 2
 """
@@ -139,29 +139,29 @@ TEST_CASES: list[dict[str, Any]] = resolve_env_placeholders(
     },
     {
         "name": "create_and_delete_product",
-        "endpoint": "/api/products/{id}",
-        "method": "DELETE",
-        "setup": {
-            "endpoint": "/api/products",
-            "method": "POST",
+        "endpoint": "/api/products",
+        "method": "POST",
+        "request_data": {
+            "headers": {
+                "Authorization": "Bearer testadminapikey01234567890abcdef1234567890abcdef",
+                "Content-Type": "application/json"
+            },
             "body": {
                 "product": {
                     "name": "Product To Delete",
                     "price": "5.99",
                     "shipping_category": "Default"
                 }
-            },
-            "extract_id_from": "id"
-        },
-        "request_data": {
-            "headers": {
-                "Authorization": "Bearer testadminapikey01234567890abcdef1234567890abcdef"
-            },
-            "path": {
-                "id": "$setup_id"
             }
         },
-        "expected_status": 204
+        "expected_status": 201,
+        "cleanup": {
+            "endpoint": "/api/products/$response_id",
+            "method": "DELETE",
+            "headers": {
+                "Authorization": "Bearer testadminapikey01234567890abcdef1234567890abcdef"
+            }
+        }
     },
     {
         "name": "delete_product_not_found",
@@ -222,27 +222,27 @@ TEST_CASES: list[dict[str, Any]] = resolve_env_placeholders(
     },
     {
         "name": "create_and_delete_taxonomy",
-        "endpoint": "/api/taxonomies/{id}",
-        "method": "DELETE",
-        "setup": {
-            "endpoint": "/api/taxonomies",
-            "method": "POST",
+        "endpoint": "/api/taxonomies",
+        "method": "POST",
+        "request_data": {
+            "headers": {
+                "Authorization": "Bearer testadminapikey01234567890abcdef1234567890abcdef",
+                "Content-Type": "application/json"
+            },
             "body": {
                 "taxonomy": {
                     "name": "Taxonomy To Delete"
                 }
-            },
-            "extract_id_from": "id"
-        },
-        "request_data": {
-            "headers": {
-                "Authorization": "Bearer testadminapikey01234567890abcdef1234567890abcdef"
-            },
-            "path": {
-                "id": "$setup_id"
             }
         },
-        "expected_status": 204
+        "expected_status": 201,
+        "cleanup": {
+            "endpoint": "/api/taxonomies/$response_id",
+            "method": "DELETE",
+            "headers": {
+                "Authorization": "Bearer testadminapikey01234567890abcdef1234567890abcdef"
+            }
+        }
     },
     {
         "name": "delete_taxonomy_not_found",
@@ -353,27 +353,27 @@ TEST_CASES: list[dict[str, Any]] = resolve_env_placeholders(
     },
     {
         "name": "create_and_delete_zone",
-        "endpoint": "/api/zones/{id}",
-        "method": "DELETE",
-        "setup": {
-            "endpoint": "/api/zones",
-            "method": "POST",
+        "endpoint": "/api/zones",
+        "method": "POST",
+        "request_data": {
+            "headers": {
+                "Authorization": "Bearer testadminapikey01234567890abcdef1234567890abcdef",
+                "Content-Type": "application/json"
+            },
             "body": {
                 "zone": {
                     "name": "Zone To Delete"
                 }
-            },
-            "extract_id_from": "id"
-        },
-        "request_data": {
-            "headers": {
-                "Authorization": "Bearer testadminapikey01234567890abcdef1234567890abcdef"
-            },
-            "path": {
-                "id": "$setup_id"
             }
         },
-        "expected_status": 204
+        "expected_status": 201,
+        "cleanup": {
+            "endpoint": "/api/zones/$response_id",
+            "method": "DELETE",
+            "headers": {
+                "Authorization": "Bearer testadminapikey01234567890abcdef1234567890abcdef"
+            }
+        }
     },
     {
         "name": "delete_zone_not_found",
