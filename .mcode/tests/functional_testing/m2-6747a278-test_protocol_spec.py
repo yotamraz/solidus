@@ -9,7 +9,7 @@ This script supports two modes:
 1. SRC Validation: Tests endpoints and captures responses (no expected_response)
 2. DST Contract Validation: Tests endpoints and validates responses match expected (has expected_response)
 
-Generated at: 2026-03-01T19:21:45.117618+00:00
+Generated at: 2026-03-01T19:50:01.649138+00:00
 Project: solidus
 Milestone: 2
 """
@@ -51,197 +51,16 @@ def resolve_env_placeholders(obj: Any) -> Any:
 TEST_CASES: list[dict[str, Any]] = resolve_env_placeholders(
     json.loads(r'''[
     {
-        "name": "search_users_happy_path",
+        "name": "list_countries_happy_path",
         "category": "HAPPY_PATH",
-        "endpoint": "/admin/search/users",
+        "endpoint": "/api/countries",
         "method": "GET",
-        "description": "Search users by email query string, expect JSON array response",
+        "description": "List countries - public endpoint, no auth required",
         "request_data": {
             "path": {},
             "query": {
-                "q": "admin"
-            },
-            "body": null
-        },
-        "expected_status": 200,
-        "setup": null,
-        "cleanup": null
-    },
-    {
-        "name": "search_users_by_ids",
-        "category": "HAPPY_PATH",
-        "endpoint": "/admin/search/users",
-        "method": "GET",
-        "description": "Search users by bulk IDs parameter",
-        "request_data": {
-            "path": {},
-            "query": {
-                "ids": "1,2,3"
-            },
-            "body": null
-        },
-        "expected_status": 200,
-        "setup": null,
-        "cleanup": null
-    },
-    {
-        "name": "search_users_empty_query",
-        "category": "BOUNDARY",
-        "endpoint": "/admin/search/users",
-        "method": "GET",
-        "description": "Search users with empty query, should return empty array or limited results",
-        "request_data": {
-            "path": {},
-            "query": {
-                "q": ""
-            },
-            "body": null
-        },
-        "expected_status": 200,
-        "setup": null,
-        "cleanup": null
-    },
-    {
-        "name": "search_users_no_match",
-        "category": "BOUNDARY",
-        "endpoint": "/admin/search/users",
-        "method": "GET",
-        "description": "Search users with query that matches nothing",
-        "request_data": {
-            "path": {},
-            "query": {
-                "q": "zzz_nonexistent_user_12345"
-            },
-            "body": null
-        },
-        "expected_status": 200,
-        "setup": null,
-        "cleanup": null
-    },
-    {
-        "name": "search_products_happy_path",
-        "category": "HAPPY_PATH",
-        "endpoint": "/admin/search/products",
-        "method": "GET",
-        "description": "Search products with pagination, expect JSON with products array and pagination metadata",
-        "request_data": {
-            "path": {},
-            "query": {
-                "page": "1",
                 "per_page": "5"
             },
-            "body": null
-        },
-        "expected_status": 200,
-        "setup": null,
-        "cleanup": null
-    },
-    {
-        "name": "search_products_by_ids",
-        "category": "HAPPY_PATH",
-        "endpoint": "/admin/search/products",
-        "method": "GET",
-        "description": "Bulk lookup products by IDs",
-        "request_data": {
-            "path": {},
-            "query": {
-                "ids": "1,2"
-            },
-            "body": null
-        },
-        "expected_status": 200,
-        "setup": null,
-        "cleanup": null
-    },
-    {
-        "name": "search_products_no_match",
-        "category": "BOUNDARY",
-        "endpoint": "/admin/search/products",
-        "method": "GET",
-        "description": "Search products with non-matching query returns empty results",
-        "request_data": {
-            "path": {},
-            "query": {
-                "q[name_cont]": "zzz_nonexistent_product_xyz"
-            },
-            "body": null
-        },
-        "expected_status": 200,
-        "setup": null,
-        "cleanup": null
-    },
-    {
-        "name": "set_locale_happy_path",
-        "category": "HAPPY_PATH",
-        "endpoint": "/admin/locale/set",
-        "method": "PUT",
-        "description": "Set admin locale to English, expect JSON response with locale and location",
-        "request_data": {
-            "path": {},
-            "query": {},
-            "body": {
-                "switch_to_locale": "en"
-            },
-            "headers": {
-                "Accept": "application/json",
-                "Content-Type": "application/json"
-            }
-        },
-        "expected_status": 200,
-        "setup": null,
-        "cleanup": null
-    },
-    {
-        "name": "set_locale_invalid",
-        "category": "INVALID_INPUT",
-        "endpoint": "/admin/locale/set",
-        "method": "PUT",
-        "description": "Set locale to unavailable locale, expect 404 with current locale",
-        "request_data": {
-            "path": {},
-            "query": {},
-            "body": {
-                "switch_to_locale": "xx_invalid_locale"
-            },
-            "headers": {
-                "Accept": "application/json",
-                "Content-Type": "application/json"
-            }
-        },
-        "expected_status": 404,
-        "setup": null,
-        "cleanup": null
-    },
-    {
-        "name": "set_locale_missing_param",
-        "category": "MISSING_REQUIRED",
-        "endpoint": "/admin/locale/set",
-        "method": "PUT",
-        "description": "Set locale without switch_to_locale parameter, should return 404 (no locale available)",
-        "request_data": {
-            "path": {},
-            "query": {},
-            "body": {},
-            "headers": {
-                "Accept": "application/json",
-                "Content-Type": "application/json"
-            }
-        },
-        "expected_status": 404,
-        "setup": null,
-        "cleanup": null
-    },
-    {
-        "name": "search_taxons_happy_path",
-        "category": "HAPPY_PATH",
-        "endpoint": "/admin/taxons/search",
-        "method": "GET",
-        "description": "Search taxons by name, expect JSON with taxons array",
-        "request_data": {
-            "path": {},
-            "query": {
-                "q": "cat"
-            },
             "body": null,
             "headers": {
                 "Accept": "application/json"
@@ -252,426 +71,158 @@ TEST_CASES: list[dict[str, Any]] = resolve_env_placeholders(
         "cleanup": null
     },
     {
-        "name": "search_taxons_by_ids",
+        "name": "list_states_happy_path",
         "category": "HAPPY_PATH",
-        "endpoint": "/admin/taxons/search",
+        "endpoint": "/api/states",
         "method": "GET",
-        "description": "Lookup taxons by IDs",
-        "request_data": {
-            "path": {},
-            "query": {
-                "ids": "1,2"
-            },
-            "body": null,
-            "headers": {
-                "Accept": "application/json"
-            }
-        },
-        "expected_status": 200,
-        "setup": null,
-        "cleanup": null
-    },
-    {
-        "name": "search_taxons_no_match",
-        "category": "BOUNDARY",
-        "endpoint": "/admin/taxons/search",
-        "method": "GET",
-        "description": "Search taxons with non-matching query returns empty results",
-        "request_data": {
-            "path": {},
-            "query": {
-                "q": "zzz_nonexistent_taxon_xyz"
-            },
-            "body": null,
-            "headers": {
-                "Accept": "application/json"
-            }
-        },
-        "expected_status": 200,
-        "setup": null,
-        "cleanup": null
-    },
-    {
-        "name": "admin_root_redirect",
-        "category": "HAPPY_PATH",
-        "endpoint": "/admin",
-        "method": "GET",
-        "description": "Admin root should redirect to orders or dashboard",
+        "description": "List states - public endpoint, no auth required",
         "request_data": {
             "path": {},
             "query": {},
-            "body": null
+            "body": null,
+            "headers": {
+                "Accept": "application/json"
+            }
         },
-        "expected_status": 302,
+        "expected_status": 200,
         "setup": null,
         "cleanup": null
     },
     {
         "name": "list_products_happy_path",
         "category": "HAPPY_PATH",
-        "endpoint": "/admin/products",
+        "endpoint": "/api/products",
         "method": "GET",
-        "description": "List admin products page, expect HTML response",
-        "request_data": {
-            "path": {},
-            "query": {},
-            "body": null
-        },
-        "expected_status": 200,
-        "setup": null,
-        "cleanup": null
-    },
-    {
-        "name": "list_products_with_search",
-        "category": "HAPPY_PATH",
-        "endpoint": "/admin/products",
-        "method": "GET",
-        "description": "List products filtered by name search",
+        "description": "List products with pagination via API key auth",
         "request_data": {
             "path": {},
             "query": {
-                "q[name_cont]": "test",
-                "q[s]": "name asc"
+                "page": "1",
+                "per_page": "5"
             },
-            "body": null
+            "body": null,
+            "headers": {
+                "Accept": "application/json",
+                "Authorization": "Bearer ${API_KEY}"
+            }
         },
         "expected_status": 200,
         "setup": null,
         "cleanup": null
     },
     {
-        "name": "list_orders_happy_path",
-        "category": "HAPPY_PATH",
-        "endpoint": "/admin/orders",
+        "name": "list_products_no_auth",
+        "category": "AUTH_REQUIRED",
+        "endpoint": "/api/products",
         "method": "GET",
-        "description": "List admin orders page with default filters",
-        "request_data": {
-            "path": {},
-            "query": {},
-            "body": null
-        },
-        "expected_status": 200,
-        "setup": null,
-        "cleanup": null
-    },
-    {
-        "name": "list_orders_with_filters",
-        "category": "HAPPY_PATH",
-        "endpoint": "/admin/orders",
-        "method": "GET",
-        "description": "List orders filtered by completed status",
+        "description": "List products without auth returns 401 Unauthorized",
         "request_data": {
             "path": {},
             "query": {
-                "q[completed_at_not_null]": "1",
-                "page": "1"
+                "page": "1",
+                "per_page": "5"
             },
-            "body": null
+            "body": null,
+            "headers": {
+                "Accept": "application/json"
+            }
         },
-        "expected_status": 200,
+        "expected_status": 401,
         "setup": null,
         "cleanup": null
     },
     {
-        "name": "list_users_happy_path",
-        "category": "HAPPY_PATH",
-        "endpoint": "/admin/users",
+        "name": "show_product_not_found",
+        "category": "NOT_FOUND",
+        "endpoint": "/api/products/{id}",
         "method": "GET",
-        "description": "List admin users page",
+        "description": "Show a non-existent product returns 404 JSON",
         "request_data": {
-            "path": {},
-            "query": {},
-            "body": null
-        },
-        "expected_status": 200,
-        "setup": null,
-        "cleanup": null
-    },
-    {
-        "name": "list_users_with_search",
-        "category": "HAPPY_PATH",
-        "endpoint": "/admin/users",
-        "method": "GET",
-        "description": "List users with email search filter",
-        "request_data": {
-            "path": {},
-            "query": {
-                "q[email_cont]": "admin"
+            "path": {
+                "id": "999999-nonexistent"
             },
-            "body": null
+            "query": {},
+            "body": null,
+            "headers": {
+                "Accept": "application/json",
+                "Authorization": "Bearer ${API_KEY}"
+            }
         },
-        "expected_status": 200,
+        "expected_status": 404,
         "setup": null,
         "cleanup": null
     },
     {
-        "name": "list_zones_happy_path",
+        "name": "create_product_happy_path",
         "category": "HAPPY_PATH",
-        "endpoint": "/admin/zones",
-        "method": "GET",
-        "description": "List zones page",
+        "endpoint": "/api/products",
+        "method": "POST",
+        "description": "Create a product via API and verify 201 response",
         "request_data": {
             "path": {},
             "query": {},
-            "body": null
+            "body": {
+                "product": {
+                    "name": "API Test Product Auto",
+                    "price": "29.99",
+                    "shipping_category_id": 1
+                }
+            },
+            "headers": {
+                "Accept": "application/json",
+                "Content-Type": "application/json",
+                "Authorization": "Bearer ${API_KEY}"
+            }
         },
-        "expected_status": 200,
+        "expected_status": 201,
         "setup": null,
         "cleanup": null
     },
     {
-        "name": "list_tax_categories_happy_path",
-        "category": "HAPPY_PATH",
-        "endpoint": "/admin/tax_categories",
-        "method": "GET",
-        "description": "List tax categories page",
+        "name": "create_product_missing_name",
+        "category": "MISSING_REQUIRED",
+        "endpoint": "/api/products",
+        "method": "POST",
+        "description": "Create product without required name field returns 422",
         "request_data": {
             "path": {},
             "query": {},
-            "body": null
+            "body": {
+                "product": {
+                    "price": "10.00",
+                    "shipping_category_id": 1
+                }
+            },
+            "headers": {
+                "Accept": "application/json",
+                "Content-Type": "application/json",
+                "Authorization": "Bearer ${API_KEY}"
+            }
         },
-        "expected_status": 200,
+        "expected_status": 422,
         "setup": null,
         "cleanup": null
     },
     {
-        "name": "list_tax_rates_happy_path",
+        "name": "create_and_delete_product",
         "category": "HAPPY_PATH",
-        "endpoint": "/admin/tax_rates",
-        "method": "GET",
-        "description": "List tax rates page",
-        "request_data": {
-            "path": {},
-            "query": {},
-            "body": null
-        },
-        "expected_status": 200,
-        "setup": null,
-        "cleanup": null
-    },
-    {
-        "name": "list_shipping_methods_happy_path",
-        "category": "HAPPY_PATH",
-        "endpoint": "/admin/shipping_methods",
-        "method": "GET",
-        "description": "List shipping methods page",
-        "request_data": {
-            "path": {},
-            "query": {},
-            "body": null
-        },
-        "expected_status": 200,
-        "setup": null,
-        "cleanup": null
-    },
-    {
-        "name": "list_shipping_categories_happy_path",
-        "category": "HAPPY_PATH",
-        "endpoint": "/admin/shipping_categories",
-        "method": "GET",
-        "description": "List shipping categories page",
-        "request_data": {
-            "path": {},
-            "query": {},
-            "body": null
-        },
-        "expected_status": 200,
-        "setup": null,
-        "cleanup": null
-    },
-    {
-        "name": "list_payment_methods_happy_path",
-        "category": "HAPPY_PATH",
-        "endpoint": "/admin/payment_methods",
-        "method": "GET",
-        "description": "List payment methods page",
-        "request_data": {
-            "path": {},
-            "query": {},
-            "body": null
-        },
-        "expected_status": 200,
-        "setup": null,
-        "cleanup": null
-    },
-    {
-        "name": "list_stock_locations_happy_path",
-        "category": "HAPPY_PATH",
-        "endpoint": "/admin/stock_locations",
-        "method": "GET",
-        "description": "List stock locations page",
-        "request_data": {
-            "path": {},
-            "query": {},
-            "body": null
-        },
-        "expected_status": 200,
-        "setup": null,
-        "cleanup": null
-    },
-    {
-        "name": "list_stock_items_happy_path",
-        "category": "HAPPY_PATH",
-        "endpoint": "/admin/stock_items",
-        "method": "GET",
-        "description": "List stock items page",
-        "request_data": {
-            "path": {},
-            "query": {},
-            "body": null
-        },
-        "expected_status": 200,
-        "setup": null,
-        "cleanup": null
-    },
-    {
-        "name": "list_taxonomies_happy_path",
-        "category": "HAPPY_PATH",
-        "endpoint": "/admin/taxonomies",
-        "method": "GET",
-        "description": "List taxonomies page",
-        "request_data": {
-            "path": {},
-            "query": {},
-            "body": null
-        },
-        "expected_status": 200,
-        "setup": null,
-        "cleanup": null
-    },
-    {
-        "name": "list_properties_happy_path",
-        "category": "HAPPY_PATH",
-        "endpoint": "/admin/properties",
-        "method": "GET",
-        "description": "List product properties page",
-        "request_data": {
-            "path": {},
-            "query": {},
-            "body": null
-        },
-        "expected_status": 200,
-        "setup": null,
-        "cleanup": null
-    },
-    {
-        "name": "list_option_types_happy_path",
-        "category": "HAPPY_PATH",
-        "endpoint": "/admin/option_types",
-        "method": "GET",
-        "description": "List option types page",
-        "request_data": {
-            "path": {},
-            "query": {},
-            "body": null
-        },
-        "expected_status": 200,
-        "setup": null,
-        "cleanup": null
-    },
-    {
-        "name": "list_stores_happy_path",
-        "category": "HAPPY_PATH",
-        "endpoint": "/admin/stores",
-        "method": "GET",
-        "description": "List stores page (may redirect to edit if only one store)",
-        "request_data": {
-            "path": {},
-            "query": {},
-            "body": null
-        },
-        "expected_status": 200,
-        "setup": null,
-        "cleanup": null
-    },
-    {
-        "name": "list_adjustment_reasons_happy_path",
-        "category": "HAPPY_PATH",
-        "endpoint": "/admin/adjustment_reasons",
-        "method": "GET",
-        "description": "List adjustment reasons page",
-        "request_data": {
-            "path": {},
-            "query": {},
-            "body": null
-        },
-        "expected_status": 200,
-        "setup": null,
-        "cleanup": null
-    },
-    {
-        "name": "list_refund_reasons_happy_path",
-        "category": "HAPPY_PATH",
-        "endpoint": "/admin/refund_reasons",
-        "method": "GET",
-        "description": "List refund reasons page",
-        "request_data": {
-            "path": {},
-            "query": {},
-            "body": null
-        },
-        "expected_status": 200,
-        "setup": null,
-        "cleanup": null
-    },
-    {
-        "name": "list_return_reasons_happy_path",
-        "category": "HAPPY_PATH",
-        "endpoint": "/admin/return_reasons",
-        "method": "GET",
-        "description": "List return reasons page",
-        "request_data": {
-            "path": {},
-            "query": {},
-            "body": null
-        },
-        "expected_status": 200,
-        "setup": null,
-        "cleanup": null
-    },
-    {
-        "name": "list_store_credit_reasons_happy_path",
-        "category": "HAPPY_PATH",
-        "endpoint": "/admin/store_credit_reasons",
-        "method": "GET",
-        "description": "List store credit reasons page",
-        "request_data": {
-            "path": {},
-            "query": {},
-            "body": null
-        },
-        "expected_status": 200,
-        "setup": null,
-        "cleanup": null
-    },
-    {
-        "name": "list_reimbursement_types_happy_path",
-        "category": "HAPPY_PATH",
-        "endpoint": "/admin/reimbursement_types",
-        "method": "GET",
-        "description": "List reimbursement types page",
-        "request_data": {
-            "path": {},
-            "query": {},
-            "body": null
-        },
-        "expected_status": 200,
-        "setup": null,
-        "cleanup": null
-    },
-    {
-        "name": "create_and_delete_product_happy_path",
-        "category": "HAPPY_PATH",
-        "endpoint": "/admin/products/{id}",
+        "endpoint": "/api/products/{id}",
         "method": "DELETE",
-        "description": "Create a product, then soft-delete it to verify delete works",
+        "description": "Create a product then delete it, expect 204 No Content",
         "setup": {
-            "endpoint": "/admin/products",
+            "endpoint": "/api/products",
             "method": "POST",
             "body": {
-                "product[name]": "Test Product For Deletion",
-                "product[price]": "29.99",
-                "product[shipping_category_id]": "1"
+                "product": {
+                    "name": "Product To Delete Via API",
+                    "price": "19.99",
+                    "shipping_category_id": 1
+                }
+            },
+            "headers": {
+                "Accept": "application/json",
+                "Content-Type": "application/json",
+                "Authorization": "Bearer ${API_KEY}"
             },
             "extract_id_from": "id"
         },
@@ -680,56 +231,173 @@ TEST_CASES: list[dict[str, Any]] = resolve_env_placeholders(
                 "id": "$setup_id"
             },
             "query": {},
-            "body": null
+            "body": null,
+            "headers": {
+                "Accept": "application/json",
+                "Authorization": "Bearer ${API_KEY}"
+            }
         },
-        "expected_status": 302,
+        "expected_status": 204,
         "cleanup": null
     },
     {
         "name": "delete_product_not_found",
         "category": "NOT_FOUND",
-        "endpoint": "/admin/products/{id}",
+        "endpoint": "/api/products/{id}",
         "method": "DELETE",
-        "description": "Try to delete a non-existent product, expect redirect with flash error",
+        "description": "Delete a non-existent product returns 404",
         "request_data": {
             "path": {
-                "id": "nonexistent-product-slug-99999"
+                "id": "999999"
             },
             "query": {},
-            "body": null
+            "body": null,
+            "headers": {
+                "Accept": "application/json",
+                "Authorization": "Bearer ${API_KEY}"
+            }
         },
-        "expected_status": 302,
+        "expected_status": 404,
+        "setup": null,
+        "cleanup": null
+    },
+    {
+        "name": "list_taxonomies_happy_path",
+        "category": "HAPPY_PATH",
+        "endpoint": "/api/taxonomies",
+        "method": "GET",
+        "description": "List taxonomies via API",
+        "request_data": {
+            "path": {},
+            "query": {
+                "per_page": "10"
+            },
+            "body": null,
+            "headers": {
+                "Accept": "application/json",
+                "Authorization": "Bearer ${API_KEY}"
+            }
+        },
+        "expected_status": 200,
         "setup": null,
         "cleanup": null
     },
     {
         "name": "create_taxonomy_happy_path",
         "category": "HAPPY_PATH",
-        "endpoint": "/admin/taxonomies",
+        "endpoint": "/api/taxonomies",
         "method": "POST",
-        "description": "Create a new taxonomy and verify redirect on success",
+        "description": "Create a taxonomy via API returns 201",
         "request_data": {
             "path": {},
             "query": {},
             "body": {
-                "taxonomy[name]": "Test Taxonomy Created By Automated Tests"
+                "taxonomy": {
+                    "name": "API Test Taxonomy Auto"
+                }
+            },
+            "headers": {
+                "Accept": "application/json",
+                "Content-Type": "application/json",
+                "Authorization": "Bearer ${API_KEY}"
             }
         },
-        "expected_status": 302,
+        "expected_status": 201,
         "setup": null,
         "cleanup": null
     },
     {
-        "name": "create_taxonomy_missing_name",
-        "category": "MISSING_REQUIRED",
-        "endpoint": "/admin/taxonomies",
-        "method": "POST",
-        "description": "Create a taxonomy without a name, expect form re-render with error",
+        "name": "show_taxonomy_not_found",
+        "category": "NOT_FOUND",
+        "endpoint": "/api/taxonomies/{id}",
+        "method": "GET",
+        "description": "Show a non-existent taxonomy returns 404",
+        "request_data": {
+            "path": {
+                "id": "999999"
+            },
+            "query": {},
+            "body": null,
+            "headers": {
+                "Accept": "application/json",
+                "Authorization": "Bearer ${API_KEY}"
+            }
+        },
+        "expected_status": 404,
+        "setup": null,
+        "cleanup": null
+    },
+    {
+        "name": "create_and_delete_taxonomy",
+        "category": "HAPPY_PATH",
+        "endpoint": "/api/taxonomies/{id}",
+        "method": "DELETE",
+        "description": "Create a taxonomy then delete it, expect 204",
+        "setup": {
+            "endpoint": "/api/taxonomies",
+            "method": "POST",
+            "body": {
+                "taxonomy": {
+                    "name": "Taxonomy To Delete Via API"
+                }
+            },
+            "headers": {
+                "Accept": "application/json",
+                "Content-Type": "application/json",
+                "Authorization": "Bearer ${API_KEY}"
+            },
+            "extract_id_from": "id"
+        },
+        "request_data": {
+            "path": {
+                "id": "$setup_id"
+            },
+            "query": {},
+            "body": null,
+            "headers": {
+                "Accept": "application/json",
+                "Authorization": "Bearer ${API_KEY}"
+            }
+        },
+        "expected_status": 204,
+        "cleanup": null
+    },
+    {
+        "name": "delete_taxonomy_not_found",
+        "category": "NOT_FOUND",
+        "endpoint": "/api/taxonomies/{id}",
+        "method": "DELETE",
+        "description": "Delete non-existent taxonomy returns 404",
+        "request_data": {
+            "path": {
+                "id": "999999"
+            },
+            "query": {},
+            "body": null,
+            "headers": {
+                "Accept": "application/json",
+                "Authorization": "Bearer ${API_KEY}"
+            }
+        },
+        "expected_status": 404,
+        "setup": null,
+        "cleanup": null
+    },
+    {
+        "name": "list_taxons_happy_path",
+        "category": "HAPPY_PATH",
+        "endpoint": "/api/taxons",
+        "method": "GET",
+        "description": "List all taxons via API",
         "request_data": {
             "path": {},
-            "query": {},
-            "body": {
-                "taxonomy[name]": ""
+            "query": {
+                "per_page": "10"
+            },
+            "body": null,
+            "headers": {
+                "Accept": "application/json",
+                "Authorization": "Bearer ${API_KEY}"
             }
         },
         "expected_status": 200,
@@ -737,53 +405,204 @@ TEST_CASES: list[dict[str, Any]] = resolve_env_placeholders(
         "cleanup": null
     },
     {
-        "name": "delete_taxonomy_not_found",
+        "name": "list_orders_happy_path",
+        "category": "HAPPY_PATH",
+        "endpoint": "/api/orders",
+        "method": "GET",
+        "description": "List orders via API (admin)",
+        "request_data": {
+            "path": {},
+            "query": {
+                "page": "1",
+                "per_page": "5"
+            },
+            "body": null,
+            "headers": {
+                "Accept": "application/json",
+                "Authorization": "Bearer ${API_KEY}"
+            }
+        },
+        "expected_status": 200,
+        "setup": null,
+        "cleanup": null
+    },
+    {
+        "name": "create_order_happy_path",
+        "category": "HAPPY_PATH",
+        "endpoint": "/api/orders",
+        "method": "POST",
+        "description": "Create an empty order (cart) via API returns 201",
+        "request_data": {
+            "path": {},
+            "query": {},
+            "body": {
+                "order": {}
+            },
+            "headers": {
+                "Accept": "application/json",
+                "Content-Type": "application/json",
+                "Authorization": "Bearer ${API_KEY}"
+            }
+        },
+        "expected_status": 201,
+        "setup": null,
+        "cleanup": null
+    },
+    {
+        "name": "show_order_not_found",
         "category": "NOT_FOUND",
-        "endpoint": "/admin/taxonomies/{id}",
-        "method": "DELETE",
-        "description": "Try to delete non-existent taxonomy, expect redirect with flash error",
+        "endpoint": "/api/orders/{id}",
+        "method": "GET",
+        "description": "Show non-existent order returns 404",
         "request_data": {
             "path": {
-                "id": "999999"
+                "id": "R999999999"
             },
             "query": {},
-            "body": null
+            "body": null,
+            "headers": {
+                "Accept": "application/json",
+                "Authorization": "Bearer ${API_KEY}"
+            }
         },
-        "expected_status": 302,
+        "expected_status": 404,
+        "setup": null,
+        "cleanup": null
+    },
+    {
+        "name": "list_zones_happy_path",
+        "category": "HAPPY_PATH",
+        "endpoint": "/api/zones",
+        "method": "GET",
+        "description": "List zones via API",
+        "request_data": {
+            "path": {},
+            "query": {},
+            "body": null,
+            "headers": {
+                "Accept": "application/json",
+                "Authorization": "Bearer ${API_KEY}"
+            }
+        },
+        "expected_status": 200,
         "setup": null,
         "cleanup": null
     },
     {
         "name": "create_zone_happy_path",
         "category": "HAPPY_PATH",
-        "endpoint": "/admin/zones",
+        "endpoint": "/api/zones",
         "method": "POST",
-        "description": "Create a new zone with country kind",
+        "description": "Create a zone via API returns 201",
         "request_data": {
             "path": {},
             "query": {},
             "body": {
-                "zone[name]": "Test Zone For Automated Testing",
-                "zone[description]": "A test zone",
-                "zone[kind]": "country"
+                "zone": {
+                    "name": "API Test Zone Auto",
+                    "description": "Auto-test zone"
+                }
+            },
+            "headers": {
+                "Accept": "application/json",
+                "Content-Type": "application/json",
+                "Authorization": "Bearer ${API_KEY}"
             }
         },
-        "expected_status": 302,
+        "expected_status": 201,
         "setup": null,
         "cleanup": null
     },
     {
-        "name": "create_zone_missing_name",
-        "category": "MISSING_REQUIRED",
-        "endpoint": "/admin/zones",
-        "method": "POST",
-        "description": "Create zone without name, expect form re-render",
+        "name": "show_zone_not_found",
+        "category": "NOT_FOUND",
+        "endpoint": "/api/zones/{id}",
+        "method": "GET",
+        "description": "Show non-existent zone returns 404",
+        "request_data": {
+            "path": {
+                "id": "999999"
+            },
+            "query": {},
+            "body": null,
+            "headers": {
+                "Accept": "application/json",
+                "Authorization": "Bearer ${API_KEY}"
+            }
+        },
+        "expected_status": 404,
+        "setup": null,
+        "cleanup": null
+    },
+    {
+        "name": "create_and_delete_zone",
+        "category": "HAPPY_PATH",
+        "endpoint": "/api/zones/{id}",
+        "method": "DELETE",
+        "description": "Create a zone then delete it, expect 204",
+        "setup": {
+            "endpoint": "/api/zones",
+            "method": "POST",
+            "body": {
+                "zone": {
+                    "name": "Zone To Delete Via API"
+                }
+            },
+            "headers": {
+                "Accept": "application/json",
+                "Content-Type": "application/json",
+                "Authorization": "Bearer ${API_KEY}"
+            },
+            "extract_id_from": "id"
+        },
+        "request_data": {
+            "path": {
+                "id": "$setup_id"
+            },
+            "query": {},
+            "body": null,
+            "headers": {
+                "Accept": "application/json",
+                "Authorization": "Bearer ${API_KEY}"
+            }
+        },
+        "expected_status": 204,
+        "cleanup": null
+    },
+    {
+        "name": "delete_zone_not_found",
+        "category": "NOT_FOUND",
+        "endpoint": "/api/zones/{id}",
+        "method": "DELETE",
+        "description": "Delete non-existent zone returns 404",
+        "request_data": {
+            "path": {
+                "id": "999999"
+            },
+            "query": {},
+            "body": null,
+            "headers": {
+                "Accept": "application/json",
+                "Authorization": "Bearer ${API_KEY}"
+            }
+        },
+        "expected_status": 404,
+        "setup": null,
+        "cleanup": null
+    },
+    {
+        "name": "list_stock_locations_happy_path",
+        "category": "HAPPY_PATH",
+        "endpoint": "/api/stock_locations",
+        "method": "GET",
+        "description": "List stock locations via API",
         "request_data": {
             "path": {},
             "query": {},
-            "body": {
-                "zone[name]": "",
-                "zone[kind]": "country"
+            "body": null,
+            "headers": {
+                "Accept": "application/json",
+                "Authorization": "Bearer ${API_KEY}"
             }
         },
         "expected_status": 200,
@@ -791,605 +610,258 @@ TEST_CASES: list[dict[str, Any]] = resolve_env_placeholders(
         "cleanup": null
     },
     {
-        "name": "delete_zone_not_found",
-        "category": "NOT_FOUND",
-        "endpoint": "/admin/zones/{id}",
-        "method": "DELETE",
-        "description": "Try to delete non-existent zone",
-        "request_data": {
-            "path": {
-                "id": "999999"
-            },
-            "query": {},
-            "body": null
-        },
-        "expected_status": 302,
-        "setup": null,
-        "cleanup": null
-    },
-    {
-        "name": "create_tax_category_happy_path",
-        "category": "HAPPY_PATH",
-        "endpoint": "/admin/tax_categories",
-        "method": "POST",
-        "description": "Create a new tax category",
-        "request_data": {
-            "path": {},
-            "query": {},
-            "body": {
-                "tax_category[name]": "Test Tax Category Auto",
-                "tax_category[description]": "Auto-test tax category",
-                "tax_category[tax_code]": "TEST001"
-            }
-        },
-        "expected_status": 302,
-        "setup": null,
-        "cleanup": null
-    },
-    {
-        "name": "delete_tax_category_not_found",
-        "category": "NOT_FOUND",
-        "endpoint": "/admin/tax_categories/{id}",
-        "method": "DELETE",
-        "description": "Delete non-existent tax category",
-        "request_data": {
-            "path": {
-                "id": "999999"
-            },
-            "query": {},
-            "body": null
-        },
-        "expected_status": 302,
-        "setup": null,
-        "cleanup": null
-    },
-    {
-        "name": "create_shipping_category_happy_path",
-        "category": "HAPPY_PATH",
-        "endpoint": "/admin/shipping_categories",
-        "method": "POST",
-        "description": "Create a new shipping category",
-        "request_data": {
-            "path": {},
-            "query": {},
-            "body": {
-                "shipping_category[name]": "Test Shipping Category Auto"
-            }
-        },
-        "expected_status": 302,
-        "setup": null,
-        "cleanup": null
-    },
-    {
-        "name": "delete_shipping_category_not_found",
-        "category": "NOT_FOUND",
-        "endpoint": "/admin/shipping_categories/{id}",
-        "method": "DELETE",
-        "description": "Delete non-existent shipping category",
-        "request_data": {
-            "path": {
-                "id": "999999"
-            },
-            "query": {},
-            "body": null
-        },
-        "expected_status": 302,
-        "setup": null,
-        "cleanup": null
-    },
-    {
-        "name": "create_property_happy_path",
-        "category": "HAPPY_PATH",
-        "endpoint": "/admin/properties",
-        "method": "POST",
-        "description": "Create a new product property",
-        "request_data": {
-            "path": {},
-            "query": {},
-            "body": {
-                "property[name]": "test_property_auto",
-                "property[presentation]": "Test Property Auto"
-            }
-        },
-        "expected_status": 302,
-        "setup": null,
-        "cleanup": null
-    },
-    {
-        "name": "create_option_type_happy_path",
-        "category": "HAPPY_PATH",
-        "endpoint": "/admin/option_types",
-        "method": "POST",
-        "description": "Create a new option type",
-        "request_data": {
-            "path": {},
-            "query": {},
-            "body": {
-                "option_type[name]": "test-option-auto",
-                "option_type[presentation]": "Test Option Auto"
-            }
-        },
-        "expected_status": 302,
-        "setup": null,
-        "cleanup": null
-    },
-    {
-        "name": "create_adjustment_reason_happy_path",
-        "category": "HAPPY_PATH",
-        "endpoint": "/admin/adjustment_reasons",
-        "method": "POST",
-        "description": "Create a new adjustment reason",
-        "request_data": {
-            "path": {},
-            "query": {},
-            "body": {
-                "adjustment_reason[name]": "Test Adjustment Reason Auto",
-                "adjustment_reason[code]": "TEST_ADJ_01",
-                "adjustment_reason[active]": "1"
-            }
-        },
-        "expected_status": 302,
-        "setup": null,
-        "cleanup": null
-    },
-    {
-        "name": "create_refund_reason_happy_path",
-        "category": "HAPPY_PATH",
-        "endpoint": "/admin/refund_reasons",
-        "method": "POST",
-        "description": "Create a new refund reason",
-        "request_data": {
-            "path": {},
-            "query": {},
-            "body": {
-                "refund_reason[name]": "Test Refund Reason Auto",
-                "refund_reason[active]": "1"
-            }
-        },
-        "expected_status": 302,
-        "setup": null,
-        "cleanup": null
-    },
-    {
-        "name": "create_return_reason_happy_path",
-        "category": "HAPPY_PATH",
-        "endpoint": "/admin/return_reasons",
-        "method": "POST",
-        "description": "Create a new return reason",
-        "request_data": {
-            "path": {},
-            "query": {},
-            "body": {
-                "return_reason[name]": "Test Return Reason Auto",
-                "return_reason[active]": "1"
-            }
-        },
-        "expected_status": 302,
-        "setup": null,
-        "cleanup": null
-    },
-    {
-        "name": "create_store_credit_reason_happy_path",
-        "category": "HAPPY_PATH",
-        "endpoint": "/admin/store_credit_reasons",
-        "method": "POST",
-        "description": "Create a new store credit reason",
-        "request_data": {
-            "path": {},
-            "query": {},
-            "body": {
-                "store_credit_reason[name]": "Test Store Credit Reason Auto",
-                "store_credit_reason[active]": "1"
-            }
-        },
-        "expected_status": 302,
-        "setup": null,
-        "cleanup": null
-    },
-    {
         "name": "create_stock_location_happy_path",
         "category": "HAPPY_PATH",
-        "endpoint": "/admin/stock_locations",
+        "endpoint": "/api/stock_locations",
         "method": "POST",
-        "description": "Create a new stock location",
+        "description": "Create a stock location via API returns 201",
         "request_data": {
             "path": {},
             "query": {},
             "body": {
-                "stock_location[name]": "Test Warehouse Auto",
-                "stock_location[active]": "1"
+                "stock_location": {
+                    "name": "API Test Warehouse Auto",
+                    "active": true
+                }
+            },
+            "headers": {
+                "Accept": "application/json",
+                "Content-Type": "application/json",
+                "Authorization": "Bearer ${API_KEY}"
             }
         },
-        "expected_status": 302,
+        "expected_status": 201,
         "setup": null,
         "cleanup": null
     },
     {
         "name": "delete_stock_location_not_found",
         "category": "NOT_FOUND",
-        "endpoint": "/admin/stock_locations/{id}",
+        "endpoint": "/api/stock_locations/{id}",
         "method": "DELETE",
-        "description": "Delete non-existent stock location",
+        "description": "Delete non-existent stock location returns 404",
         "request_data": {
             "path": {
                 "id": "999999"
             },
             "query": {},
-            "body": null
+            "body": null,
+            "headers": {
+                "Accept": "application/json",
+                "Authorization": "Bearer ${API_KEY}"
+            }
         },
-        "expected_status": 302,
+        "expected_status": 404,
         "setup": null,
         "cleanup": null
     },
     {
-        "name": "create_user_happy_path",
+        "name": "list_properties_happy_path",
         "category": "HAPPY_PATH",
-        "endpoint": "/admin/users",
+        "endpoint": "/api/properties",
+        "method": "GET",
+        "description": "List product properties via API",
+        "request_data": {
+            "path": {},
+            "query": {},
+            "body": null,
+            "headers": {
+                "Accept": "application/json",
+                "Authorization": "Bearer ${API_KEY}"
+            }
+        },
+        "expected_status": 200,
+        "setup": null,
+        "cleanup": null
+    },
+    {
+        "name": "create_property_happy_path",
+        "category": "HAPPY_PATH",
+        "endpoint": "/api/properties",
         "method": "POST",
-        "description": "Create a new admin user",
+        "description": "Create a product property via API returns 201",
         "request_data": {
             "path": {},
             "query": {},
             "body": {
-                "user[email]": "test_auto_user@example.com",
-                "user[password]": "${TEST_USER_PASSWORD}",
-                "user[password_confirmation]": "${TEST_USER_PASSWORD}"
-            }
-        },
-        "expected_status": 302,
-        "setup": null,
-        "cleanup": null
-    },
-    {
-        "name": "create_user_missing_email",
-        "category": "MISSING_REQUIRED",
-        "endpoint": "/admin/users",
-        "method": "POST",
-        "description": "Create user without email, expect validation error",
-        "request_data": {
-            "path": {},
-            "query": {},
-            "body": {
-                "user[email]": "",
-                "user[password]": "${TEST_USER_PASSWORD}",
-                "user[password_confirmation]": "${TEST_USER_PASSWORD}"
-            }
-        },
-        "expected_status": 422,
-        "setup": null,
-        "cleanup": null
-    },
-    {
-        "name": "create_user_invalid_email",
-        "category": "INVALID_FORMAT",
-        "endpoint": "/admin/users",
-        "method": "POST",
-        "description": "Create user with invalid email format",
-        "request_data": {
-            "path": {},
-            "query": {},
-            "body": {
-                "user[email]": "not-an-email",
-                "user[password]": "${TEST_USER_PASSWORD}",
-                "user[password_confirmation]": "${TEST_USER_PASSWORD}"
-            }
-        },
-        "expected_status": 422,
-        "setup": null,
-        "cleanup": null
-    },
-    {
-        "name": "delete_user_not_found",
-        "category": "NOT_FOUND",
-        "endpoint": "/admin/users/{id}",
-        "method": "DELETE",
-        "description": "Delete non-existent user",
-        "request_data": {
-            "path": {
-                "id": "999999"
-            },
-            "query": {},
-            "body": null
-        },
-        "expected_status": 302,
-        "setup": null,
-        "cleanup": null
-    },
-    {
-        "name": "user_orders_not_found",
-        "category": "NOT_FOUND",
-        "endpoint": "/admin/users/{id}/orders",
-        "method": "GET",
-        "description": "View orders for non-existent user",
-        "request_data": {
-            "path": {
-                "id": "999999"
-            },
-            "query": {},
-            "body": null
-        },
-        "expected_status": 302,
-        "setup": null,
-        "cleanup": null
-    },
-    {
-        "name": "order_cart_not_found",
-        "category": "NOT_FOUND",
-        "endpoint": "/admin/orders/{id}/cart",
-        "method": "GET",
-        "description": "View cart for non-existent order",
-        "request_data": {
-            "path": {
-                "id": "R999999999"
-            },
-            "query": {},
-            "body": null
-        },
-        "expected_status": 302,
-        "setup": null,
-        "cleanup": null
-    },
-    {
-        "name": "advance_order_not_found",
-        "category": "NOT_FOUND",
-        "endpoint": "/admin/orders/{id}/advance",
-        "method": "PUT",
-        "description": "Advance non-existent order",
-        "request_data": {
-            "path": {
-                "id": "R999999999"
-            },
-            "query": {},
-            "body": null
-        },
-        "expected_status": 302,
-        "setup": null,
-        "cleanup": null
-    },
-    {
-        "name": "cancel_order_not_found",
-        "category": "NOT_FOUND",
-        "endpoint": "/admin/orders/{id}/cancel",
-        "method": "PUT",
-        "description": "Cancel non-existent order",
-        "request_data": {
-            "path": {
-                "id": "R999999999"
-            },
-            "query": {},
-            "body": null
-        },
-        "expected_status": 302,
-        "setup": null,
-        "cleanup": null
-    },
-    {
-        "name": "list_order_payments_not_found",
-        "category": "NOT_FOUND",
-        "endpoint": "/admin/orders/{order_id}/payments",
-        "method": "GET",
-        "description": "List payments for non-existent order",
-        "request_data": {
-            "path": {
-                "order_id": "R999999999"
-            },
-            "query": {},
-            "body": null
-        },
-        "expected_status": 302,
-        "setup": null,
-        "cleanup": null
-    },
-    {
-        "name": "list_order_adjustments_not_found",
-        "category": "NOT_FOUND",
-        "endpoint": "/admin/orders/{order_id}/adjustments",
-        "method": "GET",
-        "description": "List adjustments for non-existent order",
-        "request_data": {
-            "path": {
-                "order_id": "R999999999"
-            },
-            "query": {},
-            "body": null
-        },
-        "expected_status": 302,
-        "setup": null,
-        "cleanup": null
-    },
-    {
-        "name": "list_return_authorizations_not_found",
-        "category": "NOT_FOUND",
-        "endpoint": "/admin/orders/{order_id}/return_authorizations",
-        "method": "GET",
-        "description": "List return authorizations for non-existent order",
-        "request_data": {
-            "path": {
-                "order_id": "R999999999"
-            },
-            "query": {},
-            "body": null
-        },
-        "expected_status": 302,
-        "setup": null,
-        "cleanup": null
-    },
-    {
-        "name": "list_customer_returns_not_found",
-        "category": "NOT_FOUND",
-        "endpoint": "/admin/orders/{order_id}/customer_returns",
-        "method": "GET",
-        "description": "List customer returns for non-existent order",
-        "request_data": {
-            "path": {
-                "order_id": "R999999999"
-            },
-            "query": {},
-            "body": null
-        },
-        "expected_status": 302,
-        "setup": null,
-        "cleanup": null
-    },
-    {
-        "name": "list_reimbursements_not_found",
-        "category": "NOT_FOUND",
-        "endpoint": "/admin/orders/{order_id}/reimbursements",
-        "method": "GET",
-        "description": "List reimbursements for non-existent order",
-        "request_data": {
-            "path": {
-                "order_id": "R999999999"
-            },
-            "query": {},
-            "body": null
-        },
-        "expected_status": 302,
-        "setup": null,
-        "cleanup": null
-    },
-    {
-        "name": "list_cancellations_not_found",
-        "category": "NOT_FOUND",
-        "endpoint": "/admin/orders/{order_id}/cancellations",
-        "method": "GET",
-        "description": "List cancellations for non-existent order",
-        "request_data": {
-            "path": {
-                "order_id": "R999999999"
-            },
-            "query": {},
-            "body": null
-        },
-        "expected_status": 302,
-        "setup": null,
-        "cleanup": null
-    },
-    {
-        "name": "update_store_credit_json_not_found",
-        "category": "NOT_FOUND",
-        "endpoint": "/admin/users/{user_id}/store_credits/{id}",
-        "method": "PUT",
-        "description": "Update store credit for non-existent user/credit, expect error",
-        "request_data": {
-            "path": {
-                "user_id": "999999",
-                "id": "999999"
-            },
-            "query": {},
-            "body": {
-                "store_credit": {
-                    "memo": "test update"
+                "property": {
+                    "name": "api_test_property_auto",
+                    "presentation": "API Test Property"
                 }
             },
             "headers": {
                 "Accept": "application/json",
-                "Content-Type": "application/json"
+                "Content-Type": "application/json",
+                "Authorization": "Bearer ${API_KEY}"
             }
         },
-        "expected_status": 302,
-        "setup": null,
-        "cleanup": null
-    },
-    {
-        "name": "edit_order_customer_not_found",
-        "category": "NOT_FOUND",
-        "endpoint": "/admin/orders/{order_id}/customer",
-        "method": "GET",
-        "description": "Edit customer details for non-existent order",
-        "request_data": {
-            "path": {
-                "order_id": "R999999999"
-            },
-            "query": {},
-            "body": null
-        },
-        "expected_status": 302,
-        "setup": null,
-        "cleanup": null
-    },
-    {
-        "name": "delete_stock_item_not_found",
-        "category": "NOT_FOUND",
-        "endpoint": "/admin/stock_items/{id}",
-        "method": "DELETE",
-        "description": "Delete non-existent stock item",
-        "request_data": {
-            "path": {
-                "id": "999999"
-            },
-            "query": {},
-            "body": null
-        },
-        "expected_status": 302,
-        "setup": null,
-        "cleanup": null
-    },
-    {
-        "name": "delete_option_type_not_found",
-        "category": "NOT_FOUND",
-        "endpoint": "/admin/option_types/{id}",
-        "method": "DELETE",
-        "description": "Delete non-existent option type",
-        "request_data": {
-            "path": {
-                "id": "999999"
-            },
-            "query": {},
-            "body": null
-        },
-        "expected_status": 302,
+        "expected_status": 201,
         "setup": null,
         "cleanup": null
     },
     {
         "name": "delete_property_not_found",
         "category": "NOT_FOUND",
-        "endpoint": "/admin/properties/{id}",
+        "endpoint": "/api/properties/{id}",
         "method": "DELETE",
-        "description": "Delete non-existent property",
+        "description": "Delete non-existent property returns 404",
         "request_data": {
             "path": {
                 "id": "999999"
             },
             "query": {},
-            "body": null
+            "body": null,
+            "headers": {
+                "Accept": "application/json",
+                "Authorization": "Bearer ${API_KEY}"
+            }
         },
-        "expected_status": 302,
+        "expected_status": 404,
         "setup": null,
         "cleanup": null
     },
     {
-        "name": "delete_payment_method_not_found",
-        "category": "NOT_FOUND",
-        "endpoint": "/admin/payment_methods/{id}",
-        "method": "DELETE",
-        "description": "Delete non-existent payment method",
+        "name": "list_option_types_happy_path",
+        "category": "HAPPY_PATH",
+        "endpoint": "/api/option_types",
+        "method": "GET",
+        "description": "List option types via API",
         "request_data": {
-            "path": {
-                "id": "999999"
-            },
+            "path": {},
             "query": {},
-            "body": null
+            "body": null,
+            "headers": {
+                "Accept": "application/json",
+                "Authorization": "Bearer ${API_KEY}"
+            }
         },
-        "expected_status": 302,
+        "expected_status": 200,
         "setup": null,
         "cleanup": null
     },
     {
-        "name": "delete_shipping_method_not_found",
+        "name": "create_option_type_happy_path",
+        "category": "HAPPY_PATH",
+        "endpoint": "/api/option_types",
+        "method": "POST",
+        "description": "Create an option type via API returns 201",
+        "request_data": {
+            "path": {},
+            "query": {},
+            "body": {
+                "option_type": {
+                    "name": "api-test-option-auto",
+                    "presentation": "API Test Option"
+                }
+            },
+            "headers": {
+                "Accept": "application/json",
+                "Content-Type": "application/json",
+                "Authorization": "Bearer ${API_KEY}"
+            }
+        },
+        "expected_status": 201,
+        "setup": null,
+        "cleanup": null
+    },
+    {
+        "name": "delete_option_type_not_found",
         "category": "NOT_FOUND",
-        "endpoint": "/admin/shipping_methods/{id}",
+        "endpoint": "/api/option_types/{id}",
         "method": "DELETE",
-        "description": "Delete non-existent shipping method",
+        "description": "Delete non-existent option type returns 404",
         "request_data": {
             "path": {
                 "id": "999999"
             },
             "query": {},
-            "body": null
+            "body": null,
+            "headers": {
+                "Accept": "application/json",
+                "Authorization": "Bearer ${API_KEY}"
+            }
         },
-        "expected_status": 302,
+        "expected_status": 404,
+        "setup": null,
+        "cleanup": null
+    },
+    {
+        "name": "list_users_happy_path",
+        "category": "HAPPY_PATH",
+        "endpoint": "/api/users",
+        "method": "GET",
+        "description": "List users via API (admin only)",
+        "request_data": {
+            "path": {},
+            "query": {
+                "per_page": "5"
+            },
+            "body": null,
+            "headers": {
+                "Accept": "application/json",
+                "Authorization": "Bearer ${API_KEY}"
+            }
+        },
+        "expected_status": 200,
+        "setup": null,
+        "cleanup": null
+    },
+    {
+        "name": "list_stores_happy_path",
+        "category": "HAPPY_PATH",
+        "endpoint": "/api/stores",
+        "method": "GET",
+        "description": "List stores via API",
+        "request_data": {
+            "path": {},
+            "query": {},
+            "body": null,
+            "headers": {
+                "Accept": "application/json",
+                "Authorization": "Bearer ${API_KEY}"
+            }
+        },
+        "expected_status": 200,
+        "setup": null,
+        "cleanup": null
+    },
+    {
+        "name": "list_variants_happy_path",
+        "category": "HAPPY_PATH",
+        "endpoint": "/api/variants",
+        "method": "GET",
+        "description": "List all variants via API",
+        "request_data": {
+            "path": {},
+            "query": {
+                "per_page": "5"
+            },
+            "body": null,
+            "headers": {
+                "Accept": "application/json",
+                "Authorization": "Bearer ${API_KEY}"
+            }
+        },
+        "expected_status": 200,
+        "setup": null,
+        "cleanup": null
+    },
+    {
+        "name": "get_money_config_happy_path",
+        "category": "HAPPY_PATH",
+        "endpoint": "/api/config/money",
+        "method": "GET",
+        "description": "Get money/currency configuration",
+        "request_data": {
+            "path": {},
+            "query": {},
+            "body": null,
+            "headers": {
+                "Accept": "application/json",
+                "Authorization": "Bearer ${API_KEY}"
+            }
+        },
+        "expected_status": 200,
         "setup": null,
         "cleanup": null
     }
@@ -1397,8 +869,8 @@ TEST_CASES: list[dict[str, Any]] = resolve_env_placeholders(
 )
 
 # Base URL for API requests (from app discovery, includes host:port)
-BASE_URL = os.path.expandvars("")
-HEALTH_CHECK_ENDPOINT = os.path.expandvars("")
+BASE_URL = os.path.expandvars("http://localhost:4000")
+HEALTH_CHECK_ENDPOINT = os.path.expandvars("/api/countries")
 REQUEST_TIMEOUT = 30
 HEALTH_CHECK_URL = f"{BASE_URL.rstrip('/')}/{HEALTH_CHECK_ENDPOINT.lstrip('/')}"
 # Per-endpoint routing table for microservices DST
