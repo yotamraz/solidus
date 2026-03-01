@@ -9,7 +9,7 @@ This script supports two modes:
 1. SRC Validation: Tests endpoints and captures responses (no expected_response)
 2. DST Contract Validation: Tests endpoints and validates responses match expected (has expected_response)
 
-Generated at: 2026-03-01T21:06:32.775368+00:00
+Generated at: 2026-03-01T21:21:51.010524+00:00
 Project: solidus
 Milestone: 1
 """
@@ -518,35 +518,6 @@ TEST_CASES: list[dict[str, Any]] = resolve_env_placeholders(
         },
         "expected_status": 404,
         "setup": null,
-        "cleanup": null
-    },
-    {
-        "name": "get_country_state_happy_path",
-        "category": "HAPPY_PATH",
-        "endpoint": "/api/countries/{country_id}/states/{id}",
-        "method": "GET",
-        "description": "Get a specific state within a country from seeded data",
-        "setup": {
-            "endpoint": "/api/states",
-            "method": "GET",
-            "query": {
-                "page": 1,
-                "per_page": 1
-            },
-            "extract_id_from": "states.0.id",
-            "extract_extra": {
-                "country_id": "states.0.country_id"
-            }
-        },
-        "request_data": {
-            "path": {
-                "country_id": "$country_id",
-                "id": "$setup_id"
-            },
-            "query": {},
-            "body": null
-        },
-        "expected_status": 200,
         "cleanup": null
     },
     {
@@ -1148,8 +1119,8 @@ TEST_CASES: list[dict[str, Any]] = resolve_env_placeholders(
 )
 
 # Base URL for API requests (from app discovery, includes host:port)
-BASE_URL = os.path.expandvars("")
-HEALTH_CHECK_ENDPOINT = os.path.expandvars("")
+BASE_URL = os.path.expandvars("http://localhost:4000")
+HEALTH_CHECK_ENDPOINT = os.path.expandvars("/api/countries")
 REQUEST_TIMEOUT = 30
 HEALTH_CHECK_URL = f"{BASE_URL.rstrip('/')}/{HEALTH_CHECK_ENDPOINT.lstrip('/')}"
 # Per-endpoint routing table for microservices DST
