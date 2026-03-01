@@ -9,7 +9,7 @@ This script supports two modes:
 1. SRC Validation: Tests endpoints and captures responses (no expected_response)
 2. DST Contract Validation: Tests endpoints and validates responses match expected (has expected_response)
 
-Generated at: 2026-03-01T20:16:18.959694+00:00
+Generated at: 2026-03-01T20:46:30.192509+00:00
 Project: solidus
 Milestone: 2
 """
@@ -52,825 +52,538 @@ TEST_CASES: list[dict[str, Any]] = resolve_env_placeholders(
     json.loads(r'''[
     {
         "name": "list_countries_happy_path",
-        "category": "HAPPY_PATH",
         "endpoint": "/api/countries",
         "method": "GET",
-        "description": "List countries - public endpoint, no auth required",
-        "request_data": {
-            "path": {},
-            "query": {
-                "per_page": "5"
-            },
-            "body": null,
-            "headers": {
-                "Accept": "application/json"
-            }
-        },
-        "expected_status": 200,
-        "setup": null,
-        "cleanup": null
+        "request_data": {},
+        "expected_status": 200
     },
     {
         "name": "list_states_happy_path",
-        "category": "HAPPY_PATH",
         "endpoint": "/api/states",
         "method": "GET",
-        "description": "List states - public endpoint, no auth required",
-        "request_data": {
-            "path": {},
-            "query": {},
-            "body": null,
-            "headers": {
-                "Accept": "application/json"
-            }
-        },
-        "expected_status": 200,
-        "setup": null,
-        "cleanup": null
+        "request_data": {},
+        "expected_status": 200
     },
     {
         "name": "list_products_happy_path",
-        "category": "HAPPY_PATH",
         "endpoint": "/api/products",
         "method": "GET",
-        "description": "List products with pagination via API key auth",
         "request_data": {
-            "path": {},
-            "query": {
-                "page": "1",
-                "per_page": "5"
-            },
-            "body": null,
             "headers": {
-                "Accept": "application/json",
-                "Authorization": "Bearer ${API_KEY}"
+                "Authorization": "Bearer testadminapikey01234567890abcdef1234567890abcdef"
             }
         },
-        "expected_status": 200,
-        "setup": null,
-        "cleanup": null
+        "expected_status": 200
     },
     {
         "name": "list_products_no_auth",
-        "category": "AUTH_REQUIRED",
         "endpoint": "/api/products",
         "method": "GET",
-        "description": "List products without auth returns 401 Unauthorized",
-        "request_data": {
-            "path": {},
-            "query": {
-                "page": "1",
-                "per_page": "5"
-            },
-            "body": null,
-            "headers": {
-                "Accept": "application/json"
-            }
-        },
-        "expected_status": 401,
-        "setup": null,
-        "cleanup": null
+        "request_data": {},
+        "expected_status": 401
     },
     {
         "name": "show_product_not_found",
-        "category": "NOT_FOUND",
-        "endpoint": "/api/products/{id}",
+        "endpoint": "/api/products/999999999",
         "method": "GET",
-        "description": "Show a non-existent product returns 404 JSON",
         "request_data": {
-            "path": {
-                "id": "999999-nonexistent"
-            },
-            "query": {},
-            "body": null,
             "headers": {
-                "Accept": "application/json",
-                "Authorization": "Bearer ${API_KEY}"
+                "Authorization": "Bearer testadminapikey01234567890abcdef1234567890abcdef"
             }
         },
-        "expected_status": 404,
-        "setup": null,
-        "cleanup": null
+        "expected_status": 404
     },
     {
         "name": "create_product_happy_path",
-        "category": "HAPPY_PATH",
         "endpoint": "/api/products",
         "method": "POST",
-        "description": "Create a product via API and verify 201 response",
         "request_data": {
-            "path": {},
-            "query": {},
+            "headers": {
+                "Authorization": "Bearer testadminapikey01234567890abcdef1234567890abcdef",
+                "Content-Type": "application/json"
+            },
             "body": {
                 "product": {
-                    "name": "API Test Product Auto",
-                    "price": "29.99",
-                    "shipping_category_id": 1
+                    "name": "Test Product Happy Path",
+                    "price": "19.99",
+                    "shipping_category": "Default"
                 }
-            },
-            "headers": {
-                "Accept": "application/json",
-                "Content-Type": "application/json",
-                "Authorization": "Bearer ${API_KEY}"
             }
         },
         "expected_status": 201,
-        "setup": null,
-        "cleanup": null
+        "cleanup": {
+            "endpoint": "/api/products/$response_id",
+            "method": "DELETE",
+            "headers": {
+                "Authorization": "Bearer testadminapikey01234567890abcdef1234567890abcdef"
+            }
+        }
     },
     {
         "name": "create_product_missing_name",
-        "category": "MISSING_REQUIRED",
         "endpoint": "/api/products",
         "method": "POST",
-        "description": "Create product without required name field returns 422",
         "request_data": {
-            "path": {},
-            "query": {},
+            "headers": {
+                "Authorization": "Bearer testadminapikey01234567890abcdef1234567890abcdef",
+                "Content-Type": "application/json"
+            },
             "body": {
                 "product": {
-                    "price": "10.00",
-                    "shipping_category_id": 1
+                    "price": "9.99",
+                    "shipping_category": "Default"
                 }
-            },
-            "headers": {
-                "Accept": "application/json",
-                "Content-Type": "application/json",
-                "Authorization": "Bearer ${API_KEY}"
             }
         },
-        "expected_status": 422,
-        "setup": null,
-        "cleanup": null
+        "expected_status": 422
     },
     {
         "name": "create_and_delete_product",
-        "category": "HAPPY_PATH",
         "endpoint": "/api/products/{id}",
         "method": "DELETE",
-        "description": "Create a product then delete it, expect 204 No Content",
         "setup": {
             "endpoint": "/api/products",
             "method": "POST",
+            "headers": {
+                "Authorization": "Bearer testadminapikey01234567890abcdef1234567890abcdef",
+                "Content-Type": "application/json"
+            },
             "body": {
                 "product": {
-                    "name": "Product To Delete Via API",
-                    "price": "19.99",
-                    "shipping_category_id": 1
+                    "name": "Product To Delete",
+                    "price": "5.99",
+                    "shipping_category": "Default"
                 }
-            },
-            "headers": {
-                "Accept": "application/json",
-                "Content-Type": "application/json",
-                "Authorization": "Bearer ${API_KEY}"
             },
             "extract_id_from": "id"
         },
         "request_data": {
+            "headers": {
+                "Authorization": "Bearer testadminapikey01234567890abcdef1234567890abcdef"
+            },
             "path": {
                 "id": "$setup_id"
-            },
-            "query": {},
-            "body": null,
-            "headers": {
-                "Accept": "application/json",
-                "Authorization": "Bearer ${API_KEY}"
             }
         },
-        "expected_status": 204,
-        "cleanup": null
+        "expected_status": 204
     },
     {
         "name": "delete_product_not_found",
-        "category": "NOT_FOUND",
-        "endpoint": "/api/products/{id}",
+        "endpoint": "/api/products/999999999",
         "method": "DELETE",
-        "description": "Delete a non-existent product returns 404",
         "request_data": {
-            "path": {
-                "id": "999999"
-            },
-            "query": {},
-            "body": null,
             "headers": {
-                "Accept": "application/json",
-                "Authorization": "Bearer ${API_KEY}"
+                "Authorization": "Bearer testadminapikey01234567890abcdef1234567890abcdef"
             }
         },
-        "expected_status": 404,
-        "setup": null,
-        "cleanup": null
+        "expected_status": 404
     },
     {
         "name": "list_taxonomies_happy_path",
-        "category": "HAPPY_PATH",
         "endpoint": "/api/taxonomies",
         "method": "GET",
-        "description": "List taxonomies via API",
         "request_data": {
-            "path": {},
-            "query": {
-                "per_page": "10"
-            },
-            "body": null,
             "headers": {
-                "Accept": "application/json",
-                "Authorization": "Bearer ${API_KEY}"
+                "Authorization": "Bearer testadminapikey01234567890abcdef1234567890abcdef"
             }
         },
-        "expected_status": 200,
-        "setup": null,
-        "cleanup": null
+        "expected_status": 200
     },
     {
         "name": "create_taxonomy_happy_path",
-        "category": "HAPPY_PATH",
         "endpoint": "/api/taxonomies",
         "method": "POST",
-        "description": "Create a taxonomy via API returns 201",
         "request_data": {
-            "path": {},
-            "query": {},
+            "headers": {
+                "Authorization": "Bearer testadminapikey01234567890abcdef1234567890abcdef",
+                "Content-Type": "application/json"
+            },
             "body": {
                 "taxonomy": {
-                    "name": "API Test Taxonomy Auto"
+                    "name": "Test Taxonomy Happy Path"
                 }
-            },
-            "headers": {
-                "Accept": "application/json",
-                "Content-Type": "application/json",
-                "Authorization": "Bearer ${API_KEY}"
             }
         },
         "expected_status": 201,
-        "setup": null,
-        "cleanup": null
+        "cleanup": {
+            "endpoint": "/api/taxonomies/$response_id",
+            "method": "DELETE",
+            "headers": {
+                "Authorization": "Bearer testadminapikey01234567890abcdef1234567890abcdef"
+            }
+        }
     },
     {
         "name": "show_taxonomy_not_found",
-        "category": "NOT_FOUND",
-        "endpoint": "/api/taxonomies/{id}",
+        "endpoint": "/api/taxonomies/999999999",
         "method": "GET",
-        "description": "Show a non-existent taxonomy returns 404",
         "request_data": {
-            "path": {
-                "id": "999999"
-            },
-            "query": {},
-            "body": null,
             "headers": {
-                "Accept": "application/json",
-                "Authorization": "Bearer ${API_KEY}"
+                "Authorization": "Bearer testadminapikey01234567890abcdef1234567890abcdef"
             }
         },
-        "expected_status": 404,
-        "setup": null,
-        "cleanup": null
+        "expected_status": 404
     },
     {
         "name": "create_and_delete_taxonomy",
-        "category": "HAPPY_PATH",
         "endpoint": "/api/taxonomies/{id}",
         "method": "DELETE",
-        "description": "Create a taxonomy then delete it, expect 204",
         "setup": {
             "endpoint": "/api/taxonomies",
             "method": "POST",
+            "headers": {
+                "Authorization": "Bearer testadminapikey01234567890abcdef1234567890abcdef",
+                "Content-Type": "application/json"
+            },
             "body": {
                 "taxonomy": {
-                    "name": "Taxonomy To Delete Via API"
+                    "name": "Taxonomy To Delete"
                 }
-            },
-            "headers": {
-                "Accept": "application/json",
-                "Content-Type": "application/json",
-                "Authorization": "Bearer ${API_KEY}"
             },
             "extract_id_from": "id"
         },
         "request_data": {
+            "headers": {
+                "Authorization": "Bearer testadminapikey01234567890abcdef1234567890abcdef"
+            },
             "path": {
                 "id": "$setup_id"
-            },
-            "query": {},
-            "body": null,
-            "headers": {
-                "Accept": "application/json",
-                "Authorization": "Bearer ${API_KEY}"
             }
         },
-        "expected_status": 204,
-        "cleanup": null
+        "expected_status": 204
     },
     {
         "name": "delete_taxonomy_not_found",
-        "category": "NOT_FOUND",
-        "endpoint": "/api/taxonomies/{id}",
+        "endpoint": "/api/taxonomies/999999999",
         "method": "DELETE",
-        "description": "Delete non-existent taxonomy returns 404",
         "request_data": {
-            "path": {
-                "id": "999999"
-            },
-            "query": {},
-            "body": null,
             "headers": {
-                "Accept": "application/json",
-                "Authorization": "Bearer ${API_KEY}"
+                "Authorization": "Bearer testadminapikey01234567890abcdef1234567890abcdef"
             }
         },
-        "expected_status": 404,
-        "setup": null,
-        "cleanup": null
+        "expected_status": 404
     },
     {
         "name": "list_taxons_happy_path",
-        "category": "HAPPY_PATH",
         "endpoint": "/api/taxons",
         "method": "GET",
-        "description": "List all taxons via API",
         "request_data": {
-            "path": {},
-            "query": {
-                "per_page": "10"
-            },
-            "body": null,
             "headers": {
-                "Accept": "application/json",
-                "Authorization": "Bearer ${API_KEY}"
+                "Authorization": "Bearer testadminapikey01234567890abcdef1234567890abcdef"
             }
         },
-        "expected_status": 200,
-        "setup": null,
-        "cleanup": null
+        "expected_status": 200
     },
     {
         "name": "list_orders_happy_path",
-        "category": "HAPPY_PATH",
         "endpoint": "/api/orders",
         "method": "GET",
-        "description": "List orders via API (admin)",
         "request_data": {
-            "path": {},
-            "query": {
-                "page": "1",
-                "per_page": "5"
-            },
-            "body": null,
             "headers": {
-                "Accept": "application/json",
-                "Authorization": "Bearer ${API_KEY}"
+                "Authorization": "Bearer testadminapikey01234567890abcdef1234567890abcdef"
             }
         },
-        "expected_status": 200,
-        "setup": null,
-        "cleanup": null
+        "expected_status": 200
     },
     {
         "name": "create_order_happy_path",
-        "category": "HAPPY_PATH",
         "endpoint": "/api/orders",
         "method": "POST",
-        "description": "Create an empty order (cart) via API returns 201",
         "request_data": {
-            "path": {},
-            "query": {},
-            "body": {
-                "order": {}
-            },
             "headers": {
-                "Accept": "application/json",
-                "Content-Type": "application/json",
-                "Authorization": "Bearer ${API_KEY}"
-            }
+                "Authorization": "Bearer testadminapikey01234567890abcdef1234567890abcdef",
+                "Content-Type": "application/json"
+            },
+            "body": {}
         },
-        "expected_status": 201,
-        "setup": null,
-        "cleanup": null
+        "expected_status": 201
     },
     {
         "name": "show_order_not_found",
-        "category": "NOT_FOUND",
-        "endpoint": "/api/orders/{id}",
+        "endpoint": "/api/orders/R999999999",
         "method": "GET",
-        "description": "Show non-existent order returns 404",
         "request_data": {
-            "path": {
-                "id": "R999999999"
-            },
-            "query": {},
-            "body": null,
             "headers": {
-                "Accept": "application/json",
-                "Authorization": "Bearer ${API_KEY}"
+                "Authorization": "Bearer testadminapikey01234567890abcdef1234567890abcdef"
             }
         },
-        "expected_status": 404,
-        "setup": null,
-        "cleanup": null
+        "expected_status": 404
     },
     {
         "name": "list_zones_happy_path",
-        "category": "HAPPY_PATH",
         "endpoint": "/api/zones",
         "method": "GET",
-        "description": "List zones via API",
         "request_data": {
-            "path": {},
-            "query": {},
-            "body": null,
             "headers": {
-                "Accept": "application/json",
-                "Authorization": "Bearer ${API_KEY}"
+                "Authorization": "Bearer testadminapikey01234567890abcdef1234567890abcdef"
             }
         },
-        "expected_status": 200,
-        "setup": null,
-        "cleanup": null
+        "expected_status": 200
     },
     {
         "name": "create_zone_happy_path",
-        "category": "HAPPY_PATH",
         "endpoint": "/api/zones",
         "method": "POST",
-        "description": "Create a zone via API returns 201",
         "request_data": {
-            "path": {},
-            "query": {},
+            "headers": {
+                "Authorization": "Bearer testadminapikey01234567890abcdef1234567890abcdef",
+                "Content-Type": "application/json"
+            },
             "body": {
                 "zone": {
-                    "name": "API Test Zone Auto",
-                    "description": "Auto-test zone"
+                    "name": "Test Zone Happy Path"
                 }
-            },
-            "headers": {
-                "Accept": "application/json",
-                "Content-Type": "application/json",
-                "Authorization": "Bearer ${API_KEY}"
             }
         },
         "expected_status": 201,
-        "setup": null,
-        "cleanup": null
+        "cleanup": {
+            "endpoint": "/api/zones/$response_id",
+            "method": "DELETE",
+            "headers": {
+                "Authorization": "Bearer testadminapikey01234567890abcdef1234567890abcdef"
+            }
+        }
     },
     {
         "name": "show_zone_not_found",
-        "category": "NOT_FOUND",
-        "endpoint": "/api/zones/{id}",
+        "endpoint": "/api/zones/999999999",
         "method": "GET",
-        "description": "Show non-existent zone returns 404",
         "request_data": {
-            "path": {
-                "id": "999999"
-            },
-            "query": {},
-            "body": null,
             "headers": {
-                "Accept": "application/json",
-                "Authorization": "Bearer ${API_KEY}"
+                "Authorization": "Bearer testadminapikey01234567890abcdef1234567890abcdef"
             }
         },
-        "expected_status": 404,
-        "setup": null,
-        "cleanup": null
+        "expected_status": 404
     },
     {
         "name": "create_and_delete_zone",
-        "category": "HAPPY_PATH",
         "endpoint": "/api/zones/{id}",
         "method": "DELETE",
-        "description": "Create a zone then delete it, expect 204",
         "setup": {
             "endpoint": "/api/zones",
             "method": "POST",
+            "headers": {
+                "Authorization": "Bearer testadminapikey01234567890abcdef1234567890abcdef",
+                "Content-Type": "application/json"
+            },
             "body": {
                 "zone": {
-                    "name": "Zone To Delete Via API"
+                    "name": "Zone To Delete"
                 }
-            },
-            "headers": {
-                "Accept": "application/json",
-                "Content-Type": "application/json",
-                "Authorization": "Bearer ${API_KEY}"
             },
             "extract_id_from": "id"
         },
         "request_data": {
+            "headers": {
+                "Authorization": "Bearer testadminapikey01234567890abcdef1234567890abcdef"
+            },
             "path": {
                 "id": "$setup_id"
-            },
-            "query": {},
-            "body": null,
-            "headers": {
-                "Accept": "application/json",
-                "Authorization": "Bearer ${API_KEY}"
             }
         },
-        "expected_status": 204,
-        "cleanup": null
+        "expected_status": 204
     },
     {
         "name": "delete_zone_not_found",
-        "category": "NOT_FOUND",
-        "endpoint": "/api/zones/{id}",
+        "endpoint": "/api/zones/999999999",
         "method": "DELETE",
-        "description": "Delete non-existent zone returns 404",
         "request_data": {
-            "path": {
-                "id": "999999"
-            },
-            "query": {},
-            "body": null,
             "headers": {
-                "Accept": "application/json",
-                "Authorization": "Bearer ${API_KEY}"
+                "Authorization": "Bearer testadminapikey01234567890abcdef1234567890abcdef"
             }
         },
-        "expected_status": 404,
-        "setup": null,
-        "cleanup": null
+        "expected_status": 404
     },
     {
         "name": "list_stock_locations_happy_path",
-        "category": "HAPPY_PATH",
         "endpoint": "/api/stock_locations",
         "method": "GET",
-        "description": "List stock locations via API",
         "request_data": {
-            "path": {},
-            "query": {},
-            "body": null,
             "headers": {
-                "Accept": "application/json",
-                "Authorization": "Bearer ${API_KEY}"
+                "Authorization": "Bearer testadminapikey01234567890abcdef1234567890abcdef"
             }
         },
-        "expected_status": 200,
-        "setup": null,
-        "cleanup": null
+        "expected_status": 200
     },
     {
         "name": "create_stock_location_happy_path",
-        "category": "HAPPY_PATH",
         "endpoint": "/api/stock_locations",
         "method": "POST",
-        "description": "Create a stock location via API returns 201",
         "request_data": {
-            "path": {},
-            "query": {},
+            "headers": {
+                "Authorization": "Bearer testadminapikey01234567890abcdef1234567890abcdef",
+                "Content-Type": "application/json"
+            },
             "body": {
                 "stock_location": {
-                    "name": "API Test Warehouse Auto",
-                    "active": true
+                    "name": "Test Stock Location"
                 }
-            },
-            "headers": {
-                "Accept": "application/json",
-                "Content-Type": "application/json",
-                "Authorization": "Bearer ${API_KEY}"
             }
         },
         "expected_status": 201,
-        "setup": null,
-        "cleanup": null
+        "cleanup": {
+            "endpoint": "/api/stock_locations/$response_id",
+            "method": "DELETE",
+            "headers": {
+                "Authorization": "Bearer testadminapikey01234567890abcdef1234567890abcdef"
+            }
+        }
     },
     {
         "name": "delete_stock_location_not_found",
-        "category": "NOT_FOUND",
-        "endpoint": "/api/stock_locations/{id}",
+        "endpoint": "/api/stock_locations/999999999",
         "method": "DELETE",
-        "description": "Delete non-existent stock location returns 404",
         "request_data": {
-            "path": {
-                "id": "999999"
-            },
-            "query": {},
-            "body": null,
             "headers": {
-                "Accept": "application/json",
-                "Authorization": "Bearer ${API_KEY}"
+                "Authorization": "Bearer testadminapikey01234567890abcdef1234567890abcdef"
             }
         },
-        "expected_status": 404,
-        "setup": null,
-        "cleanup": null
+        "expected_status": 404
     },
     {
         "name": "list_properties_happy_path",
-        "category": "HAPPY_PATH",
         "endpoint": "/api/properties",
         "method": "GET",
-        "description": "List product properties via API",
         "request_data": {
-            "path": {},
-            "query": {},
-            "body": null,
             "headers": {
-                "Accept": "application/json",
-                "Authorization": "Bearer ${API_KEY}"
+                "Authorization": "Bearer testadminapikey01234567890abcdef1234567890abcdef"
             }
         },
-        "expected_status": 200,
-        "setup": null,
-        "cleanup": null
+        "expected_status": 200
     },
     {
         "name": "create_property_happy_path",
-        "category": "HAPPY_PATH",
         "endpoint": "/api/properties",
         "method": "POST",
-        "description": "Create a product property via API returns 201",
         "request_data": {
-            "path": {},
-            "query": {},
+            "headers": {
+                "Authorization": "Bearer testadminapikey01234567890abcdef1234567890abcdef",
+                "Content-Type": "application/json"
+            },
             "body": {
                 "property": {
-                    "name": "api_test_property_auto",
-                    "presentation": "API Test Property"
+                    "name": "test_property_hp",
+                    "presentation": "Test Property"
                 }
-            },
-            "headers": {
-                "Accept": "application/json",
-                "Content-Type": "application/json",
-                "Authorization": "Bearer ${API_KEY}"
             }
         },
         "expected_status": 201,
-        "setup": null,
-        "cleanup": null
+        "cleanup": {
+            "endpoint": "/api/properties/$response_id",
+            "method": "DELETE",
+            "headers": {
+                "Authorization": "Bearer testadminapikey01234567890abcdef1234567890abcdef"
+            }
+        }
     },
     {
         "name": "delete_property_not_found",
-        "category": "NOT_FOUND",
-        "endpoint": "/api/properties/{id}",
+        "endpoint": "/api/properties/999999999",
         "method": "DELETE",
-        "description": "Delete non-existent property returns 404",
         "request_data": {
-            "path": {
-                "id": "999999"
-            },
-            "query": {},
-            "body": null,
             "headers": {
-                "Accept": "application/json",
-                "Authorization": "Bearer ${API_KEY}"
+                "Authorization": "Bearer testadminapikey01234567890abcdef1234567890abcdef"
             }
         },
-        "expected_status": 404,
-        "setup": null,
-        "cleanup": null
+        "expected_status": 404
     },
     {
         "name": "list_option_types_happy_path",
-        "category": "HAPPY_PATH",
         "endpoint": "/api/option_types",
         "method": "GET",
-        "description": "List option types via API",
         "request_data": {
-            "path": {},
-            "query": {},
-            "body": null,
             "headers": {
-                "Accept": "application/json",
-                "Authorization": "Bearer ${API_KEY}"
+                "Authorization": "Bearer testadminapikey01234567890abcdef1234567890abcdef"
             }
         },
-        "expected_status": 200,
-        "setup": null,
-        "cleanup": null
+        "expected_status": 200
     },
     {
         "name": "create_option_type_happy_path",
-        "category": "HAPPY_PATH",
         "endpoint": "/api/option_types",
         "method": "POST",
-        "description": "Create an option type via API returns 201",
         "request_data": {
-            "path": {},
-            "query": {},
+            "headers": {
+                "Authorization": "Bearer testadminapikey01234567890abcdef1234567890abcdef",
+                "Content-Type": "application/json"
+            },
             "body": {
                 "option_type": {
-                    "name": "api-test-option-auto",
-                    "presentation": "API Test Option"
+                    "name": "test_option_type_hp",
+                    "presentation": "Test Option Type"
                 }
-            },
-            "headers": {
-                "Accept": "application/json",
-                "Content-Type": "application/json",
-                "Authorization": "Bearer ${API_KEY}"
             }
         },
         "expected_status": 201,
-        "setup": null,
-        "cleanup": null
+        "cleanup": {
+            "endpoint": "/api/option_types/$response_id",
+            "method": "DELETE",
+            "headers": {
+                "Authorization": "Bearer testadminapikey01234567890abcdef1234567890abcdef"
+            }
+        }
     },
     {
         "name": "delete_option_type_not_found",
-        "category": "NOT_FOUND",
-        "endpoint": "/api/option_types/{id}",
+        "endpoint": "/api/option_types/999999999",
         "method": "DELETE",
-        "description": "Delete non-existent option type returns 404",
         "request_data": {
-            "path": {
-                "id": "999999"
-            },
-            "query": {},
-            "body": null,
             "headers": {
-                "Accept": "application/json",
-                "Authorization": "Bearer ${API_KEY}"
+                "Authorization": "Bearer testadminapikey01234567890abcdef1234567890abcdef"
             }
         },
-        "expected_status": 404,
-        "setup": null,
-        "cleanup": null
+        "expected_status": 404
     },
     {
         "name": "list_users_happy_path",
-        "category": "HAPPY_PATH",
         "endpoint": "/api/users",
         "method": "GET",
-        "description": "List users via API (admin only)",
         "request_data": {
-            "path": {},
-            "query": {
-                "per_page": "5"
-            },
-            "body": null,
             "headers": {
-                "Accept": "application/json",
-                "Authorization": "Bearer ${API_KEY}"
+                "Authorization": "Bearer testadminapikey01234567890abcdef1234567890abcdef"
             }
         },
-        "expected_status": 200,
-        "setup": null,
-        "cleanup": null
+        "expected_status": 200
     },
     {
         "name": "list_stores_happy_path",
-        "category": "HAPPY_PATH",
         "endpoint": "/api/stores",
         "method": "GET",
-        "description": "List stores via API",
         "request_data": {
-            "path": {},
-            "query": {},
-            "body": null,
             "headers": {
-                "Accept": "application/json",
-                "Authorization": "Bearer ${API_KEY}"
+                "Authorization": "Bearer testadminapikey01234567890abcdef1234567890abcdef"
             }
         },
-        "expected_status": 200,
-        "setup": null,
-        "cleanup": null
+        "expected_status": 200
     },
     {
         "name": "list_variants_happy_path",
-        "category": "HAPPY_PATH",
         "endpoint": "/api/variants",
         "method": "GET",
-        "description": "List all variants via API",
         "request_data": {
-            "path": {},
-            "query": {
-                "per_page": "5"
-            },
-            "body": null,
             "headers": {
-                "Accept": "application/json",
-                "Authorization": "Bearer ${API_KEY}"
+                "Authorization": "Bearer testadminapikey01234567890abcdef1234567890abcdef"
             }
         },
-        "expected_status": 200,
-        "setup": null,
-        "cleanup": null
+        "expected_status": 200
     },
     {
         "name": "get_money_config_happy_path",
-        "category": "HAPPY_PATH",
         "endpoint": "/api/config/money",
         "method": "GET",
-        "description": "Get money/currency configuration",
         "request_data": {
-            "path": {},
-            "query": {},
-            "body": null,
             "headers": {
-                "Accept": "application/json",
-                "Authorization": "Bearer ${API_KEY}"
+                "Authorization": "Bearer testadminapikey01234567890abcdef1234567890abcdef"
             }
         },
-        "expected_status": 200,
-        "setup": null,
-        "cleanup": null
+        "expected_status": 200
     }
 ]''')
 )
 
 # Base URL for API requests (from app discovery, includes host:port)
-BASE_URL = os.path.expandvars("")
-HEALTH_CHECK_ENDPOINT = os.path.expandvars("")
+BASE_URL = os.path.expandvars("http://localhost:4000")
+HEALTH_CHECK_ENDPOINT = os.path.expandvars("/api/countries")
 REQUEST_TIMEOUT = 30
 HEALTH_CHECK_URL = f"{BASE_URL.rstrip('/')}/{HEALTH_CHECK_ENDPOINT.lstrip('/')}"
 # Per-endpoint routing table for microservices DST
